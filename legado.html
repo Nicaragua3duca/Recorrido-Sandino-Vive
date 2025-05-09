@@ -556,12 +556,40 @@ body::before {
         content: "❚❚";
         font-size: 1rem;
     }
+/* BOTÓN VOLVER */
+        .btn-volver {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(212, 175, 55, 0.9);
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
 
+        .btn-volver:hover {
+            background: #f8d45a;
+            transform: translateX(-5px);
+        }
 
 
     </style>
 </head>
 <body>
+
+     <!-- BOTÓN VOLVER -->
+    <button class="btn-volver" id="btnVolver">
+        <span>←</span> Volver
+    </button>
+
     <h1>Augusto Calderón Sandino</h1>
     
     <!-- NAVEGACIÓN POR PESTAÑAS -->
@@ -970,6 +998,7 @@ body::before {
             document.getElementById(tabName).classList.add('active');
             event.currentTarget.classList.add('active');
         }
+
         
         // FUNCIONES PARA MODALES
         function openModal(modalId) {
@@ -1133,6 +1162,12 @@ function toggleAudio(audioId) {
         const audio = document.getElementById('audio-edsn');
         audio.load();
     });
+
+     // Botón volver
+            btnVolver.addEventListener('click', function() {
+                window.history.back();
+            });
+        
 
     </script>
     
