@@ -286,20 +286,28 @@ body::after {
         font-size: 0.95rem;
     }
 
-    .reproductor-audio {
-        flex-direction: column;
-        padding: 10px 15px;
-        gap: 10px;
-    }
+   .reproductor-audio {
+    display: flex;
+    flex-direction: row; /* para alinear elementos horizontalmente */
+    align-items: center;
+    justify-content: flex-start; /* alinea a la izquierda */
+    padding: 10px 15px;
+    gap: 10px;
+    width: fit-content; /* se ajusta al tamaño del contenido */
+    max-width: 300px; /* puedes ajustar esto según el tamaño deseado */
+    background-color: #f1f1f1; /* opcional: para ver el área del reproductor */
+    border-radius: 8px; /* opcional: bordes redondeados */
+}
 
-    .barra-progreso {
-        width: 100%;
-    }
+.barra-progreso {
+    width: 150px; /* o lo que se ajuste bien a tu diseño */
+}
 
-    .tiempo-audio {
-        min-width: unset;
-        text-align: left;
-    }
+.tiempo-audio {
+    min-width: 50px;
+    text-align: left;
+    font-size: 12px;
+}
 
     .btn-volver {
         font-size: 0.9rem;
@@ -360,7 +368,7 @@ a:hover {
                     <div class="descripcion-personaje">
                         <p>Augusto C. Sandino (1895-1934), líder revolucionario nicaragüense que lideró la resistencia contra la ocupación estadounidense de Nicaragua. Conocido como el "General de Hombres Libres", su lucha sentó las bases para el nacionalismo latinoamericano.</p>
                         
-                        <a href="#contenido-sandino"                        
+                        <a href="legado.html"                    
                         style="margin-top: 10px; 
                                display: block; 
                                padding: 8px 16px; 
@@ -414,11 +422,17 @@ a:hover {
         <audio id="audioAngelita" src="assets/audios/angelita.mp3" preload="auto"></audio>
         <div class="controles-audio">
             <button class="btn-audio" id="btnPlayPause">▶</button>
-            <button class="btn-audio" id="btnStop">■</button>
+            <button class="btn-audio" id="btnStop">🔇</button>
             <span class="tiempo-audio" id="tiempoAudio">00:00 / 00:00</span>
         </div>
         <div class="barra-progreso">
             <div class="progreso" id="barraProgreso"></div>
+             <audio controls>
+        <source src="tu-audio.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+    <div class="tiempo-audio">0:00</div>
+</div>
         </div>
     </div>
 
