@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museo Virtual | Sandino y Angelita Morales</title>
+    <style>
+        /* RESET Y ESTILOS GLOBALES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* PORTADA PRINCIPAL - CON EFECTO DE ENTRADA */
+        .portada {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                url('https://i.ibb.co/B2QzyXqS/pexels-masoodaslami-19429432.webp') center/cover no-repeat;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.95);
+            animation: fadeIn 1.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* EFECTO DE CARGA INICIAL */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOut 0.5s 1.5s forwards;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            border-top-color: #d4af37;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        .titulo-principal {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 2rem;
+            color: #d4af37;
+            padding: 0 1rem;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s 1s ease-out forwards;
+             text-shadow: 
+        0 0 5px rgba(0, 0, 0, 0.7), /* Borde blanco difuminado */
+        0 0 10px rgba(212, 175, 55, 0.8), /* Sombras doradas existentes */
+        0 0 20px rgba(212, 175, 55, 0.6);
+    -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.3); /* Borde fino blanco (opcional) */
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* EFECTO DORADO MEJORADO */
+        .titulo-dinamico {
+            display: inline-block;
+            color: #d4af37;
+            text-shadow: 
+                0 0 10px rgba(212, 175, 55, 0.8),
+                0 0 20px rgba(212, 175, 55, 0.6);
+            border-right: 3px solid #d4af37;
+            animation: blink 0.75s step-end infinite;
+        }
+
+        .btn-entrar {
+            padding: 1rem 2rem;
+            background: #d4af37;
+            color: #594301;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 5px 15px rgba(212, 175, 55, 0.4),
+                0 0 10px rgba(212, 175, 55, 0.6) inset;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            animation: fadeIn 0.5s 1.5s ease-out forwards;
+        }
+
+        .btn-entrar:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 20px rgba(212, 175, 55, 0.6),
+                0 0 15px rgba(212, 175, 55, 0.8) inset;
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: #d4af37; }
+        }
+
+        /* Botones de audio */
+        #btnActivarAudio {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.5s 2s ease-out forwards;
+        }
+
+        #btnSilenciarAudio {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            background: #d4af37;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0;
+            animation: fadeIn 0.5s 2s ease-out forwards;
+        }
+
+        /* Efecto Parallax (modifica la clase .portada existente) */
+.portada {
+    /* ... tus estilos actuales ... */
+    position: relative;
+    overflow: hidden;
+}
+
+.portada::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: 
+        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+        url('https://i.ibb.co/B2QzyXqS/pexels-masoodaslami-19429432.webp') center/cover no-repeat;
+    z-index: -1;
+    animation: subtleMove 20s infinite alternate ease-in-out;
+}
+
+/* Efecto Niebla (agrégalo después de .portada::before) */
+.portada::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, 
+                rgba(212, 175, 55, 0.03) 0%, 
+                rgba(0, 0, 0, 0.8) 70%);
+    z-index: 1;
+    pointer-events: none;
+    animation: fogAnimation 15s infinite alternate;
+}
+
+
+
+/* Animaciones (agrega junto a tus @keyframes existentes) */
+@keyframes subtleMove {
+    0% { transform: scale(1) translateY(0) translateX(0); }
+    100% { transform: scale(1.05) translateY(-20px) translateX(10px); }
+}
+
+@keyframes fogAnimation {
+    0% { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 0.9; transform: scale(1.05); }
+}
+
+@keyframes twinkle {
+    50% { opacity: 0.2; }
+}
+
+@media (max-width: 768px) {
+    .portada::before { animation: none; } /* Desactiva parallax en móviles */
+    .estrellas::before { background-size: 100px 100px; } /* Estrellas más densas */
+}
+    </style>
+</head>
+<body>
+    <!-- PRELOADER -->
+    <div class="loader">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- PORTADA PRINCIPAL -->
+    <main class="portada" id="portada">
+        <h1 class="titulo-principal">
+            <span id="titulo-dinamico" class="titulo-dinamico">Museo Virtual </span><br>
+            <span>del General Sandino y Angelita Morales</span>
+        </h1>
+        <button class="btn-entrar" id="btnEntrar">Explorar Museo</button>
+    </main>
+
+    <!-- Audio de fondo (oculto) -->
+    <audio id="audioFondo" loop>
+        <source src="assets/audios/sandino_intro.mp3" type="audio/mpeg">
+        Tu navegador no soporta audio HTML5.
+    </audio>
+
+    <!-- Botón de respaldo -->
+    <button id="btnActivarAudio">Activar sonido ambiental</button>
+    <!-- Botón de silencio -->
+    <button id="btnSilenciarAudio">🔇 Silenciar</button>
+
+    <script>
+        // Esperar a que el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            const audioFondo = document.getElementById('audioFondo');
+            const btnActivarAudio = document.getElementById('btnActivarAudio');
+            
+            // Intento de reproducción automática (con manejo de errores)
+            function iniciarAudio() {
+                // Configuración del audio
+                audioFondo.volume = 0.2;
+                
+                // Intento de reproducción
+                const promesaReproduccion = audioFondo.play();
+                
+                if (promesaReproduccion !== undefined) {
+                    promesaReproduccion
+                        .then(() => {
+                            console.log("Audio de fondo iniciado");
+                        })
+                        .catch(error => {
+                            console.log("Autoplay bloqueado:", error);
+                            mostrarBotonActivacion();
+                        });
+                }
+
+                const btnSilenciarAudio = document.getElementById('btnSilenciarAudio');
+                let audioSilenciado = false;
+
+                btnSilenciarAudio.addEventListener('click', function () {
+                    audioSilenciado = !audioSilenciado;
+                    audioFondo.muted = audioSilenciado;
+                    this.textContent = audioSilenciado ? '🔊 Activar sonido' : '🔇 Silenciar';
+                });
+            }
+
+            // Mostrar botón si el autoplay falla
+            function mostrarBotonActivacion() {
+                btnActivarAudio.style.display = 'block';
+                btnActivarAudio.addEventListener('click', function() {
+                    audioFondo.play()
+                        .then(() => {
+                            this.style.display = 'none';
+                            console.log("Audio activado manualmente");
+                        })
+                        .catch(e => console.error("Error al activar:", e));
+                });
+            }
+
+            // Iniciar audio después de la animación de carga
+            setTimeout(() => {
+                if (document.readyState === 'complete') {
+                    iniciarAudio();
+                } else {
+                    iniciarAudio();
+                    document.addEventListener('click', function() {
+                        iniciarAudio();
+                    }, { once: true });
+                }
+            }, 1500); // Coincide con el tiempo del loader
+            
+            // EFECTO MAQUINA DE ESCRIBIR (inicia después del loader)
+            setTimeout(() => {
+                const titulo = document.getElementById('titulo-dinamico');
+                const texto = "Gesta Heróica";
+                let i = 0;
+                
+                function typeWriter() {
+                    if (i < texto.length) {
+                        titulo.textContent += texto.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 150);
+                    } else {
+                        titulo.classList.remove('titulo-dinamico');
+                    }
+                }
+
+                typeWriter();
+            }, 1800);
+
+            // NAVEGACIÓN
+            document.getElementById('btnEntrar').addEventListener('click', () => {
+                // Efecto de salida antes de redirigir
+                document.querySelector('.portada').style.animation = 'fadeIn 0.5s ease-out reverse forwards';
+                setTimeout(() => {
+                    window.location.href = "seleccion.html";
+                }, 500);
+            });
+        });
+    </script>
+
+   
+
+</body>
+</html>

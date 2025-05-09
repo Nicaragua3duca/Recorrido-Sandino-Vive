@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandino: Legado Completo</title>
+    <style>
+        :root {
+            --dorado: #d4af37;
+            --oscuro: #121212;
+            --gris-oscuro: #222;
+            --gris-claro: #ddd;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--oscuro);
+            color: var(--gris-claro);
+            line-height: 1.6;
+        }
+        
+        /* NAVEGACIÓN POR PESTAÑAS */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            background: var(--gris-oscuro);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .tab-btn {
+            padding: 15px 25px;
+            background: transparent;
+            border: none;
+            color: var(--gris-claro);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .tab-btn.active {
+            color: var(--dorado);
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--dorado);
+            box-shadow: 0 0 10px var(--dorado);
+        }
+        .tab-content {
+            display: none;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        /* ESTILOS COMUNES */
+        h1, h2, h3 {
+            color: var(--dorado);
+            margin-bottom: 15px;
+        }
+        h1 {
+    color: #fff8e1; /* Blanco cálido */
+    text-shadow: 
+        2px 2px 1px var(--dorado),
+        0 0 8px var(--dorado),
+        0 0 20px rgba(212, 175, 55, 0.4);
+    font-weight: bold;
+    font-size: 3.5rem; /* Tamaño aumentado (antes era ~2.5rem) */
+    padding: 15px 25px;
+    display: block;
+    text-align: center;
+    margin: 25px auto;
+    background: linear-gradient(135deg, 
+              rgba(0,0,0,0.7) 0%, 
+              rgba(18,18,18,0.9) 100%);
+    border-radius: 10px;
+    border: 2px solid var(--dorado);
+    
+    /* Centrado y efecto 3D */
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 30px 0;
+    
+    /* Efecto de relieve */
+    box-shadow: 
+        0 5px 15px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+}
+        h2 { font-size: 1.8rem; border-bottom: 1px solid var(--dorado); padding-bottom: 5px;
+            text-align: center;}
+        h3 { font-size: 1.4rem; }
+        p { margin-bottom: 15px; }
+        ul, ol { margin-left: 25px; margin-bottom: 20px; }
+        blockquote {
+            border-left: 3px solid var(--dorado);
+            padding-left: 15px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #aaa;
+        }
+
+        /* ========== [NUEVA LÍNEA DE TIEMPO MEJORADA] ========== */
+        .timeline-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            
+        }
+        .timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 3px;
+            background: var(--dorado);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px var(--dorado);
+        }
+        .evento {
+            padding: 20px 40px;
+            position: relative;
+            width: 50%;
+            margin-bottom: 40px;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        .evento.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .left { left: 0; }
+        .right { left: 50%; }
+        .evento-content {
+            padding: 25px;
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+            border-radius: 10px;
+    border: 2px solid var(--dorado);
+        }
+        .evento:hover .evento-content {
+            transform: translateY(-5px);
+            border-color: var(--dorado);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+            
+        }
+        .fecha {
+            position: absolute;
+            width: 130px;
+            background: var(--dorado);
+            color: #000;
+            text-align: center;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 5px;
+            top: 20px;
+            z-index: 1;
+        }
+        .left .fecha { right: -150px; }
+        .right .fecha { left: -150px; }
+        .evento::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: var(--dorado);
+            border-radius: 50%;
+            top: 30px;
+            z-index: 1;
+            box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.3);
+        }
+        .left::after { right: -12px; }
+        .right::after { left: -12px; }
+        
+        /* ========== [/FIN NUEVA LÍNEA DE TIEMPO] ========== */
+        
+        /* BIOGRAFÍA INTERACTIVA */
+        .biografia-etapas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .etapa {
+            background: var(--gris-oscuro);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .etapa:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(212,175,55,0.3);
+        }
+        .etapa-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--dorado);
+        }
+        .etapa-contenido {
+            padding: 15px;
+        }
+        
+        /* CONTEXTO INTERNACIONAL */
+        .contexto-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .contexto-card {
+            background: var(--gris-oscuro);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-top: 3px solid var(--dorado);
+        }
+        .contexto-card h3 {
+            display: flex;
+            align-items: center;
+        }
+        .contexto-card h3::before {
+            content: '🌎';
+            margin-right: 10px;
+        }
+        
+        /* DOCUMENTOS */
+        .documentos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .documento {
+            background: var(--gris-oscuro);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .documento:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 25px rgba(212,175,55,0.3);
+        }
+        .documento-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--dorado);
+        }
+        .documento-info {
+            padding: 15px;
+        }
+        
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: var(--oscuro);
+            margin: 50px auto;
+            padding: 30px;
+            max-width: 800px;
+            border-radius: 10px;
+            border: 2px solid var(--dorado);
+            position: relative;
+            animation: modalFadeIn 0.4s;
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: var(--gris-claro);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .close-modal:hover {
+            color: var(--dorado);
+            transform: rotate(90deg);
+        }
+        .modal-img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            margin: 20px 0;
+            background: #000;
+            border-radius: 5px;
+        }
+
+       @media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem; /* Tamaño para tablets */
+        padding: 12px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2rem; /* Tamaño para móviles */
+        padding: 10px 15px;
+    }
+}
+
+        
+        /* ANIMACIONES */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            /* Ajustes para línea de tiempo */
+            .timeline::before { left: 31px; }
+            .evento {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            .left, .right { left: 0; }
+            .left .fecha, .right .fecha {
+                left: 15px;
+                right: auto;
+                width: 100px;
+            }
+            .left::after, .right::after { left: 21px; }
+            
+            .tab-btn { padding: 12px 15px; font-size: 0.9rem; }
+        }
+
+        /* ===== PARALLAX SIMPLE Y FUNCIONAL ===== */
+body {
+    background-color: transparent;
+    position: relative;
+    min-height: 200vh; /* Para permitir scroll */
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: url('https://i.ibb.co/TBfBTkqy/pexels-bopopics-15047884.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* ¡La propiedad mágica! */
+    opacity: 0.9;
+    filter: sepia(30%) brightness(100%);
+}
+
+.tab-content {
+    background: rgba(7, 5, 5, 0.6);
+    backdrop-filter: blur(3px);
+}   
+
+/* ========== ESTILOS DEL REPRODUCTOR ========== */
+.music-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(18, 18, 18, 0.8);
+    color: var(--dorado);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    border: 1px solid var(--dorado);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.music-toggle:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+.music-toggle span {
+    font-size: 1.2rem;
+}
+
+/* Timeline mini */
+.timeline-mini {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    position: relative;
+}
+.timeline-mini::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--dorado);
+    z-index: 1;
+}
+.timeline-item {
+    text-align: center;
+    z-index: 2;
+}
+.timeline-date {
+    background: var(--dorado);
+    color: #000;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    display: inline-block;
+}
+.timeline-desc {
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Consecuencias grid */
+.consequences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+.consequence-card {
+    background: rgba(30, 30, 30, 0.7);
+    border: 1px solid var(--dorado);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+.consequence-card h4 {
+    color: var(--dorado);
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+
+    /* Estilos del reproductor de audio */
+    .audio-player {
+  
+ 
+    border-radius: 10px;
+   
+    margin: 15px auto; /* Cambiado a 'auto' para centrar horizontalmente */
+    width: fit-content; /* Ajusta el ancho al contenido */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra todo verticalmente */
+    text-align: center;
+}
+    
+    .audio-controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+    
+    .audio-btn {
+        background: var(--dorado);
+        color: #000;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+         margin: 0 auto; /* Centrado adicional */
+    }
+   
+    
+    
+    .audio-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    }
+    
+    .audio-time {
+        font-size: 0.9rem;
+        color: var(--gris-claro);
+    }
+    
+    .audio-progress {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+    
+    .audio-progress-bar {
+        height: 100%;
+        width: 0%;
+        background: var(--dorado);
+        transition: width 0.1s linear;
+    }
+    
+    /* Estados del reproductor */
+    .audio-playing .audio-icon {
+        display: none;
+    }
+    
+    .audio-playing::before {
+        content: "❚❚";
+        font-size: 1rem;
+    }
+
+
+
+    </style>
+</head>
+<body>
+    <h1>Augusto Calderón Sandino</h1>
+    
+    <!-- NAVEGACIÓN POR PESTAÑAS -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('cronologia')">Cronología</button>
+        <button class="tab-btn" onclick="openTab('biografia')">Biografía</button>
+        <button class="tab-btn" onclick="openTab('contexto')">Contexto Internacional</button>
+        <button class="tab-btn" onclick="openTab('documentos')">Documentos</button>
+    </div>
+    
+    <!-- ========== [SECCIÓN CRONOLOGÍA ACTUALIZADA] ========== -->
+    <div id="cronologia" class="tab-content active">
+        <h2>Cronología Extendida de la Lucha Sandinista</h2>
+        
+        <div class="timeline-container">
+            <div class="timeline">
+                <!-- INTERVENCIÓN -->
+                <div class="evento left" onclick="openModal('modal-intervencion')">
+                    <div class="evento-content">
+                        <div class="fecha">1912-1926</div>
+                        <h3>Intervención Estadounidense</h3>
+                        <p>Ocupación militar de Nicaragua por los marines estadounidenses para proteger intereses económicos.</p>
+                    </div>
+                </div>
+                
+                <!-- NACIMIENTO EDSN -->
+                <div class="evento right" onclick="openModal('modal-edsn')">
+                    <div class="evento-content">
+                        <div class="fecha">Oct 1927</div>
+                        <h3>Creación del EDSN</h3>
+                        <p>Fundación del Ejército Defensor de la Soberanía Nacional con 30 hombres iniciales.</p>
+                    </div>
+                </div>
+                
+                <!-- BATALLA OCOTAL -->
+                <div class="evento left" onclick="openModal('modal-ocotal')">
+                    <div class="evento-content">
+                        <div class="fecha">Jul 1927</div>
+                        <h3>Batalla de Ocotal</h3>
+                        <p>Primer gran enfrentamiento contra los marines, usando tácticas de guerrilla innovadoras.</p>
+                    </div>
+                </div>
+                
+                <!-- MANIFIESTO -->
+                <div class="evento right" onclick="openModal('modal-manifiesto')">
+                    <div class="evento-content">
+                        <div class="fecha">Jul 1927</div>
+                        <h3>Manifiesto Político</h3>
+                        <p>"Manifiesto a los nicaragüenses, a Centroamérica y al mundo" exponiendo su ideario.</p>
+                    </div>
+                </div>
+                
+                <!-- RETIRADA -->
+                <div class="evento left" onclick="openModal('modal-retirada')">
+                    <div class="evento-content">
+                        <div class="fecha">Ene 1933</div>
+                        <h3>Retirada de los marines</h3>
+                        <p>EE.UU. retira sus tropas tras costosa ocupación de más de 20 años.</p>
+                    </div>
+                </div>
+                
+                <!-- TRAICIÓN -->
+                <div class="evento right" onclick="openModal('modal-traicion')">
+                    <div class="evento-content">
+                        <div class="fecha">Feb 1934</div>
+                        <h3>Asesinato de Sandino</h3>
+                        <p>Ejecutado por órdenes de Anastasio Somoza García tras reunión de paz.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ========== [/FIN SECCIÓN CRONOLOGÍA] ========== -->
+    
+    <!-- SECCIÓN BIOGRAFÍA (SIN CAMBIOS) -->
+    <div id="biografia" class="tab-content">
+        <h2>Biografía por Etapas</h2>
+        
+        <div class="biografia-etapas">
+            <!-- INFANCIA -->
+            <div class="etapa" onclick="openModal('modal-infancia')">
+                <img src="https://i.ibb.co/Q3vDm90v/Margarita-Calder-n.png" class="etapa-img" alt="Infancia">
+                <div class="etapa-contenido">
+                    <h3>Infancia (1895-1912)</h3>
+                    <p>Nacimiento en Niquinohomo y primeros años en el campo nicaragüense.</p>
+                </div>
+            </div>
+            
+            <!-- EXILIO -->
+            <div class="etapa" onclick="openModal('modal-exilio')">
+                <img src="https://i.ibb.co/8n6QTz7n/66513970-ca8e-11ee-896d-39d9bd3cadbb-jpg.webp" class="etapa-img" alt="Exilio">
+                <div class="etapa-contenido">
+                    <h3>Exilio en México (1923-1926)</h3>
+                    <p>Experiencias formativas con movimientos obreros y revolucionarios.</p>
+                </div>
+            </div>
+            
+            <!-- GUERRA -->
+            <div class="etapa" onclick="openModal('modal-guerra')">
+                <img src="https://i.ibb.co/jvW45T5c/sandino1.jpg" class="etapa-img" alt="Guerra">
+                <div class="etapa-contenido">
+                    <h3>Guerra Nacionalista (1927-1933)</h3>
+                    <p>Liderazgo de la resistencia contra la ocupación estadounidense.</p>
+                </div>
+            </div>
+            
+            <!-- LEGADO -->
+            <div class="etapa" onclick="openModal('modal-legado')">
+                <img src="https://i.ibb.co/ZprKSf0N/La-tumba-de-Sandino.jpg" class="etapa-img" alt="Legado">
+                <div class="etapa-contenido">
+                    <h3>Legado (1934-actualidad)</h3>
+                    <p>Influencia en movimientos revolucionarios latinoamericanos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SECCIÓN CONTEXTO (SIN CAMBIOS) -->
+    <div id="contexto" class="tab-content">
+        <h2>Contexto Internacional</h2>
+        
+        <div class="contexto-grid">
+            <!-- IMPERIALISMO -->
+            <div class="contexto-card" onclick="openModal('modal-imperialismo')">
+                <h3>Imperialismo en América</h3>
+                <p>Doctrina Monroe y políticas intervencionistas de EE.UU. en la región (1898-1933).</p>
+            </div>
+            
+            <!-- REVOLUCIÓN MEXICANA -->
+            <div class="contexto-card" onclick="openModal('modal-mexico')">
+                <h3>Revolución Mexicana</h3>
+                <p>Influencia en el pensamiento antiimperialista de Sandino (1910-1920).</p>
+            </div>
+            
+            <!-- CRISIS 1929 -->
+            <div class="contexto-card" onclick="openModal('modal-crisis')">
+                <h3>Gran Depresión</h3>
+                <p>Impacto económico en la ocupación estadounidense (1929-1933).</p>
+            </div>
+            
+            <!-- LATINOAMÉRICA -->
+            <div class="contexto-card" onclick="openModal('modal-latam')">
+                <h3>Movimientos Contemporáneos</h3>
+                <p>Luchas antiimperialistas paralelas en Cuba, Haití y República Dominicana.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- SECCIÓN DOCUMENTOS (SIN CAMBIOS) -->
+    <div id="documentos" class="tab-content">
+        <h2>Documentos Históricos</h2>
+        
+        <div class="documentos-container">
+            <!-- MANIFIESTO -->
+            <div class="documento" onclick="openModal('modal-doc-manifiesto')">
+                <img src="https://i.ibb.co/RGKVVbpY/Sandino-Yucatan-1929-recorte.jpg" class="documento-img" alt="Manifiesto">
+                <div class="documento-info">
+                    <h3>Manifiesto de 1927</h3>
+                    <p>Documento fundacional del EDSN</p>
+                </div>
+            </div>
+            
+            <!-- CARTAS -->
+            <div class="documento" onclick="openModal('modal-doc-cartas')">
+                <img src="https://via.placeholder.com/300x400/333/DDD?text=CARTAS+DIPLOMÁTICAS" class="documento-img" alt="Cartas">
+                <div class="documento-info">
+                    <h3>Correspondencia</h3>
+                    <p>Cartas a líderes internacionales</p>
+                </div>
+            </div>
+            
+            <!-- PLAN DE PAZ -->
+            <div class="documento" onclick="openModal('modal-doc-paz')">
+                <img src="https://via.placeholder.com/300x400/333/DDD?text=PLAN+DE+PAZ" class="documento-img" alt="Plan de Paz">
+                <div class="documento-info">
+                    <h3>Plan de Paz (1933)</h3>
+                    <p>Propuesta de desarme negociado</p>
+                </div>
+            </div>
+            
+            <!-- TESTAMENTO -->
+            <div class="documento" onclick="openModal('modal-doc-testamento')">
+                <img src="https://via.placeholder.com/300x400/333/DDD?text=TESTAMENTO+POLÍTICO" class="documento-img" alt="Testamento">
+                <div class="documento-info">
+                    <h3>Últimas declaraciones</h3>
+                    <p>Previas a su asesinato</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODALES (SIN CAMBIOS) -->
+    <div id="modal-intervencion" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h2>Intervención Estadounidense (1912-1933)</h2>
+        <img src="https://i.ibb.co/pj7Z5fXr/OCUPACION-NORTEAMERICANA.jpg" class="modal-img" alt="Marines estadounidenses en Nicaragua">
+        
+        <div class="timeline-mini">
+            <div class="timeline-item">
+                <div class="timeline-date">1912-1925</div>
+                <div class="timeline-desc">Primera ocupación militar</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">1925-1926</div>
+                <div class="timeline-desc">Intento fallido de retirada</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">1926-1933</div>
+                <div class="timeline-desc">Segunda ocupación y resistencia sandinista</div>
+            </div>
+        </div>
+
+        <h3><i class="icon-target"></i> Objetivos documentados</h3>
+        <ul class="styled-list">
+            <li><strong>Control financiero</strong>: Garantizar el pago de $1.5 millones a bancos de NY (National City Bank, 1911)</li>
+            <li><strong>Estrategia geopolítica</strong>: Controlar la ruta del canal mediante el Tratado Bryan-Chamorro (1916)</li>
+            <li><strong>Protección económica</strong>: Resguardar inversiones en madera (Bragman's Bluff Co.) y minería</li>
+        </ul>
+
+        <h3><i class="icon-impact"></i> Consecuencias</h3>
+        <div class="consequences-grid">
+            <div class="consequence-card">
+                <h4>Soberanía</h4>
+                <p>Pérdida de control aduanero y militar hasta 1933</p>
+            </div>
+            <div class="consequence-card">
+                <h4>Guardia Nacional</h4>
+                <p>Creada por EE.UU. en 1925, luego usada por Somoza</p>
+            </div>
+            <div class="consequence-card">
+                <h4>Resistencia</h4>
+                <p>Base social que Sandino organizó desde 1927</p>
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+    
+    <!-- Añadir más modales para cada contenido -->
+    <div id="modal-edsn" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h2>Creación del EDSN (Octubre 1927)</h2>
+        
+        <!-- Reproductor de audio mejorado -->
+        <div class="audio-player" style="text-align: center;"> 
+            <audio id="audio-edsn">
+                <source src="assets/audios/ESDN.mp3" type="audio/mpeg">
+                <source src="assets/audio/ESDN.ogg" type="audio/ogg">
+                Tu navegador no soporta audio HTML5.
+            </audio>
+            <div class="audio-controls">
+                <button class="audio-btn" onclick="toggleAudio('audio-edsn')">
+                    <span class="audio-icon">▶</span>
+                    <span class="audio-text">Escuchar Narración</span>
+                </button>
+                <div class="audio-time">0:00 / 0:00</div>
+            </div>
+            <div class="audio-progress">
+                <div class="audio-progress-bar"></div>
+            </div>
+        </div>
+
+        <img src="https://i.ibb.co/FLB24Fw7/EDSN.jpg" class="modal-img" alt="Miembros del EDSN">
+        
+        <p>El <strong>Ejército Defensor de la Soberanía Nacional (EDSN)</strong> fue fundado por Augusto Sandino el 2 de octubre de 1927 en el cerro El Chipote, Nicaragua. Comenzó con apenas 30 hombres armados con rifles de caza y machetes.</p>
+        
+        <h3>Características clave:</h3>
+        <ul>
+            <li>Primer ejército guerrillero antiimperialista de América Latina</li>
+            <li>Base social: campesinos, mineros y obreros</li>
+            <li>Estructura militar no convencional (columnas volantes)</li>
+            <li>Juramento de lealtad a la soberanía nacional</li>
+        </ul>
+        
+        <blockquote>
+            "Soy nicaragüense y me siento orgulloso de que en mis venas circule, más que cualquiera, la sangre india americana que por atavismo encierra el misterio de ser patriota, leal y sincero"
+            <footer>- Proclama de Sandino al fundar el EDSN</footer>
+        </blockquote>
+    </div>
+</div>
+
+
+    <div id="modal-ocotal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2>Batalla de Ocotal (16-17 julio 1927)</h2>
+            <img src="https://i.ibb.co/BFB950N/66513970-ca8e-11ee-896d-39d9bd3cadbb-jpg.webp" class="modal-img" alt="Batalla de Ocotal">
+            
+            <p>Primer gran enfrentamiento entre el EDSN y los Marines estadounidenses. Sandino atacó la guarnición de Ocotal con 300 hombres, demostrando tácticas innovadoras:</p>
+            
+            <h3>Innovaciones tácticas:</h3>
+            <ul>
+                <li>Primer uso de trincheras móviles en América</li>
+                <li>Ataque simultáneo a cuartel y comunicaciones</li>
+                <li>Uso de explosivos artesanales (llamados "chimbombas")</li>
+                <li>Retirada estratégica ante refuerzos aéreos</li>
+            </ul>
+            
+            <h3>Consecuencias:</h3>
+            <ul>
+                <li>Primer bombardeo aéreo en América Latina (por EE.UU.)</li>
+                
+                <li>Demonización de Sandino como "bandolero"</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="modal-manifiesto" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2>Manifiesto a los Nicaragüenses (1 julio 1927)</h2>
+            <img src="https://i.ibb.co/q3B0FRQy/Sandino-Yucatan-1929-recorte-1.jpg" class="modal-img" alt="Manifiesto de Sandino">
+            
+            <p>Documento fundacional del pensamiento sandinista, redactado en San Albino y difundido clandestinamente:</p>
+            
+            <h3>Principios ideológicos:</h3>
+            <ul>
+                <li>Rechazo al Pacto del Espino Negro (acuerdo de rendición)</li>
+                <li>Denuncia del imperialismo yanqui</li>
+                <li>Llamado a la unidad latinoamericana</li>
+                <li>Reivindicación de los derechos obreros</li>
+            </ul>
+            
+            <blockquote>
+                "No me vendo ni me rindo. Yo quiero patria libre o morir."
+                <footer>- Fragmento del Manifiesto</footer>
+            </blockquote>
+            
+            <h3>Impacto:</h3>
+            <p>Traducido a 5 idiomas y distribuido por redes obreras internacionales, inspiró movimientos antiimperialistas en toda la región.</p>
+        </div>
+    </div>
+
+    <div id="modal-retirada" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2>Retirada de los Marines (2 enero 1933)</h2>
+            <img src="https://i.ibb.co/8Dw9VtVS/Marines.jpg" class="modal-img" alt="Retirada de los marines">
+            
+            <p>Tras 6 años de resistencia sandinista, EE.UU. retira sus tropas de Nicaragua en lo que consideraron "la primera derrota militar del imperialismo yanqui en América Latina".</p>
+            
+            <h3>Contexto:</h3>
+            <ul>
+                <li>Costo económico: $2 millones mensuales (equivalente a $40M hoy)</li>
+                <li>Presión internacional por masacre de El Sauce (1932)</li>
+                <li>Crisis económica por Gran Depresión</li>
+            </ul>
+            
+            <h3>Consecuencias:</h3>
+            <ul>
+                <li>Sandino firma acuerdo de paz con Sacasa</li>
+                <li>EE.UU. deja como herencia la Guardia Nacional</li>
+                <li>Primera victoria militar antiimperialista en el continente</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="modal-traicion" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2>Asesinato de Sandino (21 febrero 1934)</h2>
+            <img src="https://i.ibb.co/ZprKSf0N/sandino-tumba.jpg" class="modal-img" alt="Tumba de Sandino">
+            
+            <p>Tragedia conocida como "La traicionera noche de Managua". Sandino es emboscado tras salir de una cena de paz con el presidente Sacasa.</p>
+            
+            <h3>Detalles históricos:</h3>
+            <ul>
+                <li>Ejecutado junto a sus generales Estrada y Umanzor</li>
+                <li>Ordenado por Anastasio Somoza García</li>
+                <li>Su cadáver fue desaparecido</li>
+                <li>Últimas palabras: "¡Muero por la patria!"</li>
+            </ul>
+            
+            <blockquote>
+                "Ese loco Sandino se ha convertido en una leyenda, y las leyendas son más peligrosas que los ejércitos."
+                <footer>- Comandante de los Marines, 1934</footer>
+            </blockquote>
+            
+            <h3>Legado inmediato:</h3>
+            <ul>
+                <li>Inicio de la dictadura somocista (43 años)</li>
+                <li>Inspiración para la Revolución Sandinista (1979)</li>
+                <li>Icono global de la resistencia antiimperialista</li>
+            </ul>
+        </div>
+    </div>
+
+    
+    
+    <script>
+        // FUNCIÓN PARA CAMBIAR PESTAÑAS
+        function openTab(tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabButtons = document.getElementsByClassName('tab-btn');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // FUNCIONES PARA MODALES
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            const modals = document.getElementsByClassName('modal');
+            for (let i = 0; i < modals.length; i++) {
+                modals[i].style.display = 'none';
+            }
+            document.body.style.overflow = 'auto';
+        }
+        
+        // CERRAR MODAL AL HACER CLIC FUERA
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeModal();
+            }
+        }
+
+        // ========== [NUEVO: ANIMACIÓN DE APARICIÓN PARA EVENTOS] ==========
+        function animateTimeline() {
+            const eventos = document.querySelectorAll('.evento');
+            eventos.forEach((evento, index) => {
+                setTimeout(() => {
+                    evento.classList.add('visible');
+                }, index * 200);
+            });
+        }
+
+        // Observador para animar cuando la sección es visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateTimeline();
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const timeline = document.querySelector('.timeline-container');
+            if (timeline) {
+                observer.observe(timeline);
+            }
+            
+            // Precarga de imágenes (opcional)
+            console.log('Museo Virtual Sandino cargado');
+        });
+        // ========== [/FIN NUEVAS FUNCIONES] ==========
+
+        // ========== CONTROL DE MÚSICA ==========
+document.addEventListener('DOMContentLoaded', function() {
+    const bgMusic = document.getElementById('bgMusic');
+    const musicToggle = document.getElementById('musicToggle');
+    let isPlaying = false;
+
+    // Configuración inicial
+    bgMusic.volume = 0.3; // Volumen al 30%
+    musicToggle.style.display = 'none'; // Oculta inicialmente
+
+    // Función para alternar música
+    function toggleMusic() {
+        if (isPlaying) {
+            bgMusic.pause();
+            musicToggle.innerHTML = '<span>🔇</span>';
+        } else {
+            bgMusic.play()
+                .then(() => {
+                    musicToggle.innerHTML = '<span>🎵</span>';
+                    musicToggle.style.display = 'flex';
+                })
+                .catch(error => {
+                    console.log("Error al reproducir:", error);
+                });
+        }
+        isPlaying = !isPlaying;
+    }
+
+    // Intenta autoplay después de interacción
+    function handleFirstInteraction() {
+        toggleMusic();
+        document.body.removeEventListener('click', handleFirstInteraction);
+        document.body.removeEventListener('keydown', handleFirstInteraction);
+    }
+
+    // Espera interacción del usuario (requerido por navegadores)
+    document.body.addEventListener('click', handleFirstInteraction, { once: true });
+    document.body.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+    // Control manual
+    musicToggle.addEventListener('click', function() {
+        if (bgMusic.paused) {
+            bgMusic.play();
+            musicToggle.innerHTML = '<span>🎵</span>';
+        } else {
+            bgMusic.pause();
+            musicToggle.innerHTML = '<span>🔇</span>';
+        }
+    });
+});
+
+ // Función para controlar la reproducción
+    // Modifica tu función toggleAudio() existente
+function toggleAudio(audioId) {
+    const audio = document.getElementById(audioId);
+    const bgMusic = document.getElementById('bgMusic'); // Tu audio de fondo
+    
+    if (audio.paused) {
+        // Pausar el audio de fondo si está sonando
+        if (!bgMusic.paused) {
+            bgMusic.pause();
+            bgMusic.dataset.wasPlaying = "true"; // Marcar que estaba activo
+        }
+        
+        audio.play().then(() => {
+            // Éxito: Actualizar interfaz
+        }).catch(error => {
+            console.error("Error:", error);
+        });
+    } else {
+        audio.pause();
+        
+        // Reanudar el audio de fondo si estaba activo
+        if (bgMusic.dataset.wasPlaying === "true") {
+            bgMusic.play();
+            delete bgMusic.dataset.wasPlaying;
+        }
+    }
+}
+    
+    // Actualizar barra de progreso
+    document.getElementById('audio-edsn').addEventListener('timeupdate', function() {
+        const audio = this;
+        const progress = (audio.currentTime / audio.duration) * 100;
+        document.querySelector('.audio-progress-bar').style.width = progress + '%';
+        
+        // Actualizar tiempo
+        const currentTime = formatTime(audio.currentTime);
+        const duration = formatTime(audio.duration);
+        document.querySelector('.audio-time').textContent = `${currentTime} / ${duration}`;
+    });
+    
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+    
+    // Reiniciar al terminar
+    document.getElementById('audio-edsn').addEventListener('ended', function() {
+        const btn = document.querySelector('[onclick^="toggleAudio"]');
+        btn.parentElement.parentElement.classList.remove('audio-playing');
+        btn.querySelector('.audio-text').textContent = 'Escuchar de nuevo';
+        document.querySelector('.audio-progress-bar').style.width = '0%';
+    });
+    
+    // Precarga de audio al abrir modal
+    document.querySelector('[onclick="openModal(\'modal-edsn\')"]').addEventListener('click', function() {
+        const audio = document.getElementById('audio-edsn');
+        audio.load();
+    });
+
+    </script>
+    
+    <!-- Reproductor de audio -->
+<audio id="bgMusic" loop>
+    <source src="assets/audios/redamen.mp3" type="audio/mpeg">
+    <source src="assets/audio/redamen.ogg" type="audio/ogg">
+    Tu navegador no soporta audio HTML5.
+</audio>
+
+<!-- Botón de control de música -->
+<div id="musicToggle" class="music-toggle" title="Control de audio">
+    <span>🔇</span>
+</div>
+
+</body>
+</html>
