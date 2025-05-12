@@ -360,49 +360,52 @@
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-                padding: 12px 20px;
-            }
-            
-            .timeline::before { left: 31px; }
-            .evento {
-                width: 100%;
-                padding-left: 70px;
-                padding-right: 25px;
-            }
-            .left, .right { left: 0; }
-            .left .fecha, .right .fecha {
-                left: 15px;
-                right: auto;
-                width: 100px;
-            }
-            .left::after, .right::after { left: 21px; }
-            
-            .tab-btn { padding: 12px 15px; font-size: 0.9rem; }
-            
-            .btn-volver {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-            
-            .documentos-table {
-                display: block;
-                overflow-x: auto;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 2rem;
-                padding: 10px 15px;
-            }
-            
-            .legado-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+       @media (max-width: 768px) {
+    /* Ajustes para línea de tiempo en móviles */
+    .timeline::before { 
+        left: 31px;
+        height: calc(100% - 40px); /* Reduce altura para dejar espacio */
+    }
+    
+    .evento {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+        margin-bottom: 60px; /* Más espacio entre eventos */
+    }
+    
+    .left, .right { 
+        left: 0; 
+    }
+    
+    .left .fecha, .right .fecha {
+        left: 15px;
+        right: auto;
+        width: 100px;
+        top: -25px; /* Mover fechas arriba */
+    }
+    
+    .left::after, .right::after { 
+        left: 21px;
+        top: 15px; /* Ajustar posición del punto */
+    }
+    
+    .evento-content {
+        padding: 20px;
+        margin-top: 20px; /* Espacio adicional */
+    }
+    
+    /* Asegurar que los botones sean clickeables */
+    .evento {
+        z-index: 2;
+        position: relative;
+    }
+    
+    .evento-content {
+        position: relative;
+        z-index: 3;
+    }
+}
 
         /* Animaciones */
         @keyframes fadeIn {
