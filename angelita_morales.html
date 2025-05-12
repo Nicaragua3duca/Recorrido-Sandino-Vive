@@ -690,6 +690,16 @@
                 new Image().src = img;
             });
         });
+
+        // Mejorar accesibilidad táctil en móviles
+document.querySelectorAll('.evento').forEach(evento => {
+    evento.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.98)';
+    });
+    evento.addEventListener('touchend', function() {
+        this.style.transform = 'scale(1)';
+    });
+});
     </script>
 </body>
 </html>
