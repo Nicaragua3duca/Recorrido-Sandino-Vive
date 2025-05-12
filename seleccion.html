@@ -349,9 +349,9 @@ a:hover {
 </head>
 <body>
     <!-- BOTÓN VOLVER -->
-    <button class="btn-volver" id="btnVolver">
-        <span>←</span> Volver
-    </button>
+    <button class="btn-volver" id="btnVolver" onclick="window.location.href='index.html'">
+    <span>←</span> Volver
+</button>
 
     <!-- PANTALLA DE SELECCIÓN -->
     <main class="marco-museo">
@@ -395,7 +395,8 @@ a:hover {
                     <h3 class="nombre-personaje">Angelita Morales</h3>
                     <div class="descripcion-personaje">
                         <p>Angelita Morales de Aviles (1922-1996), destacada educadora y luchadora social nicaragüense. Pionera en la defensa de los derechos de las mujeres y la educación popular en Nicaragua durante el siglo XX.</p>
-                        <a href="#contenido-angelita" 
+                        
+   <a href="angelita_morales.html"
    style="margin-top: 10px; 
           display: inline-block; 
           padding: 8px 16px; 
@@ -583,7 +584,45 @@ function configurarTarjetas() {
 // Ejecutar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', configurarTarjetas);
 
+// Función para cargar la pestaña inicial
+function loadInitialTab() {
+    // Obtener el hash de la URL si existe
+    const hash = window.location.hash.substr(1);
+    const validTabs = ['cronologia', 'biografia', 'contexto', 'documentos', 'galeria'];
+    
+    // Verificar si el hash es una pestaña válida
+    if (hash && validTabs.includes(hash)) {
+        openTab(hash);
+    } else {
+        // Mostrar la pestaña de cronología por defecto
+        openTab('cronologia');
+    }
+}
 
+// Evento para cuando se carga la página
+document.addEventListener('DOMContentLoaded', loadInitialTab);
+
+// Evento para cuando se navega hacia atrás/adelante
+window.addEventListener('popstate', loadInitialTab);
+
+// Modifica la función openTab para actualizar el historial
+function openTab(tabName) {
+    const tabContents = document.getElementsByClassName('tab-content');
+    for (let i = 0; i < tabContents.length; i++) {
+        tabContents[i].classList.remove('active');
+    }
+    
+    const tabButtons = document.getElementsByClassName('tab-btn');
+    for (let i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].classList.remove('active');
+    }
+    
+    document.getElementById(tabName).classList.add('active');
+    event.currentTarget.classList.add('active');
+    
+    // Actualizar el historial sin recargar
+    history.pushState(null, null, `#${tabName}`);
+}
     </script>
 
     
