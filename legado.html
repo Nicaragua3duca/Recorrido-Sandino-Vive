@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-   <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TCVBW4X6XS"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -11,7 +10,7 @@
 
   gtag('config', 'G-TCVBW4X6XS');
 </script>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sandino: Legado Completo</title>
@@ -1661,11 +1660,12 @@ body::before {
         
         <!-- Reproductor de audio mejorado -->
         <div class="audio-player" style="text-align: center;"> 
-            <audio id="audio-edsn">
-                <source src="assets/audios/ESDN.mp3" type="audio/mpeg">
-                <source src="assets/audio/ESDN.ogg" type="audio/ogg">
-                Tu navegador no soporta audio HTML5.
-            </audio>
+           <audio id="audio-edsn" class="audio-narrativo" preload="metadata">
+    <source src="assets/audios/ESDN.mp3" type="audio/mpeg">
+    <source src="assets/audio/ESDN.ogg" type="audio/ogg">
+    Tu navegador no soporta audio HTML5.
+</audio>
+
             <div class="audio-controls">
                 <button class="audio-btn" onclick="toggleAudio('audio-edsn')">
                     <span class="audio-icon">▶</span>
@@ -1950,112 +1950,123 @@ document.addEventListener('DOMContentLoaded', function() {
     const musicToggle = document.getElementById('musicToggle');
     let isPlaying = false;
 
-    // Configuración inicial
-    bgMusic.volume = 0.2; // Volumen al 10%
-    musicToggle.style.display = 'none'; // Oculta inicialmente
+    
 
-    // Función para alternar música
-    function toggleMusic() {
-        if (isPlaying) {
-            bgMusic.pause();
-            musicToggle.innerHTML = '<span>🔇</span>';
-        } else {
-            bgMusic.play()
-                .then(() => {
-                    musicToggle.innerHTML = '<span>🎵</span>';
-                    musicToggle.style.display = 'flex';
-                })
-                .catch(error => {
-                    console.log("Error al reproducir:", error);
-                });
-        }
-        isPlaying = !isPlaying;
+    // Configuración inicial
+    bgMusic.volume = 0.2;
+    musicToggle.style.display = 'none';
+
+    // Función debounce para evitar múltiples clics
+    function debounce(func, delay = 300) {
+        let timeout;
+        return function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, arguments), delay);
+        };
     }
 
-    // Intenta autoplay después de interacción
-    function handleFirstInteraction() {
+    // Función para alternar música
+    const toggleMusic = debounce(async function() {
+    try {
+        if (isPlaying) {
+            await bgMusic.pause();
+            musicToggle.innerHTML = '<span>🔇</span>';
+        } else {
+            // ✅ Pausar todas las narraciones activas antes de reproducir la música
+            document.querySelectorAll('.audio-narrativo').forEach(audio => {
+                if (!audio.paused) {
+                    audio.pause();
+                    audio.currentTime = 0;
+
+                    const btn = document.querySelector(`[onclick="toggleAudio('${audio.id}')"]`);
+                    if (btn) {
+                        btn.querySelector('.audio-icon').textContent = '▶';
+                        btn.querySelector('.audio-text').textContent = 'Escuchar Narración';
+                    }
+                }
+            });
+
+            await bgMusic.play();
+            musicToggle.innerHTML = '<span>🎵</span>';
+            musicToggle.style.display = 'flex';
+        }
+        isPlaying = !isPlaying;
+    } catch (error) {
+        console.error("Error al reproducir:", error);
+    }
+});
+
+
+    // Control manual (consistente con toggleMusic)
+    musicToggle.addEventListener('click', toggleMusic);
+
+    // Autoplay tras interacción
+    const handleFirstInteraction = debounce(() => {
         toggleMusic();
         document.body.removeEventListener('click', handleFirstInteraction);
         document.body.removeEventListener('keydown', handleFirstInteraction);
-    }
+    });
 
-    // Espera interacción del usuario (requerido por navegadores)
     document.body.addEventListener('click', handleFirstInteraction, { once: true });
     document.body.addEventListener('keydown', handleFirstInteraction, { once: true });
-
-    // Control manual
-    musicToggle.addEventListener('click', function() {
-        if (bgMusic.paused) {
-            bgMusic.play();
-            musicToggle.innerHTML = '<span>🎵</span>';
-        } else {
-            bgMusic.pause();
-            musicToggle.innerHTML = '<span>🔇</span>';
-        }
-    });
 });
 
- // Función para controlar la reproducción
-    // Modifica tu función toggleAudio() existente
+// ========== CONTROL DE AUDIO (NARRACIÓN) ==========
 function toggleAudio(audioId) {
     const audio = document.getElementById(audioId);
-    const bgMusic = document.getElementById('bgMusic'); // Tu audio de fondo
-    
+    const bgMusic = document.getElementById('bgMusic');
+
     if (audio.paused) {
-        // Pausar el audio de fondo si está sonando
-        if (!bgMusic.paused) {
-            bgMusic.pause();
-            bgMusic.dataset.wasPlaying = "true"; // Marcar que estaba activo
-        }
+        bgMusic.dataset.wasPlaying = !bgMusic.paused;
+        if (bgMusic.dataset.wasPlaying === "true") bgMusic.pause();
         
-        audio.play().then(() => {
-            // Éxito: Actualizar interfaz
-        }).catch(error => {
-            console.error("Error:", error);
-        });
+        audio.play().catch(error => console.error("Error al reproducir narración:", error));
     } else {
         audio.pause();
-        
-        // Reanudar el audio de fondo si estaba activo
-        if (bgMusic.dataset.wasPlaying === "true") {
-            bgMusic.play();
+        if (bgMusic.dataset.wasPlaying === true) {
+            bgMusic.play().catch(e => console.error("Error al reanudar música:", e));
             delete bgMusic.dataset.wasPlaying;
         }
     }
 }
+
+// ========== BARRA DE PROGRESO ==========
+document.getElementById('audio-edsn')?.addEventListener('timeupdate', function() {
+    const audio = this;
+    const duration = isNaN(audio.duration) ? 1 : audio.duration; // Evita NaN
+    const progress = (audio.currentTime / duration) * 100;
+    document.querySelector('.audio-progress-bar').style.width = `${progress}%`;
     
-    // Actualizar barra de progreso
-    document.getElementById('audio-edsn').addEventListener('timeupdate', function() {
-        const audio = this;
-        const progress = (audio.currentTime / audio.duration) * 100;
-        document.querySelector('.audio-progress-bar').style.width = progress + '%';
-        
-        // Actualizar tiempo
-        const currentTime = formatTime(audio.currentTime);
-        const duration = formatTime(audio.duration);
-        document.querySelector('.audio-time').textContent = `${currentTime} / ${duration}`;
-    });
-    
-    function formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-    }
-    
-    // Reiniciar al terminar
-    document.getElementById('audio-edsn').addEventListener('ended', function() {
-        const btn = document.querySelector('[onclick^="toggleAudio"]');
-        btn.parentElement.parentElement.classList.remove('audio-playing');
+    document.querySelector('.audio-time').textContent = 
+        `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
+});
+
+function formatTime(seconds = 0) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+// Reinicio al terminar narración
+document.getElementById('audio-edsn')?.addEventListener('ended', function() {
+    const btn = document.querySelector('[onclick^="toggleAudio"]');
+    if (btn) {
+        btn.parentElement.parentElement?.classList.remove('audio-playing');
         btn.querySelector('.audio-text').textContent = 'Escuchar de nuevo';
         document.querySelector('.audio-progress-bar').style.width = '0%';
+    }
+});
+
+// Pausar todas las narraciones si se reproduce música de fondo
+document.getElementById('bgMusic')?.addEventListener('play', function () {
+    document.querySelectorAll('.audio-narrativo').forEach(audio => {
+        if (!audio.paused) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
     });
-    
-    // Precarga de audio al abrir modal
-    document.querySelector('[onclick="openModal(\'modal-edsn\')"]').addEventListener('click', function() {
-        const audio = document.getElementById('audio-edsn');
-        audio.load();
-    });
-    
+});
+
 
      // Botón volver
             btnVolver.addEventListener('click', function() {
@@ -2070,6 +2081,85 @@ document.querySelectorAll('.evento').forEach(evento => {
         this.style.transform = 'scale(1)';
     });
 });
+
+// CONTROL DE AUDIO NARRACIÓN Y MÚSICA DE FONDO
+
+  function toggleAudio(audioId) {
+    const audio = document.getElementById(audioId);
+    const bgMusic = document.getElementById('bgMusic');
+
+    // Pausar otras narraciones activas
+    document.querySelectorAll('.audio-narrativo').forEach(otherAudio => {
+      if (otherAudio !== audio && !otherAudio.paused) {
+        otherAudio.pause();
+        const otherBtn = document.querySelector(`[onclick="toggleAudio('${otherAudio.id}')"]`);
+        if (otherBtn) {
+          otherBtn.querySelector('.audio-icon').textContent = '▶';
+          otherBtn.querySelector('.audio-text').textContent = 'Escuchar Narración';
+        }
+      }
+    });
+
+    if (audio.paused) {
+      bgMusic.dataset.wasPlaying = !bgMusic.paused;
+      if (bgMusic.dataset.wasPlaying === "true") bgMusic.pause();
+
+      audio.play().catch(e => console.error("Error al reproducir narración:", e));
+      const btn = document.querySelector(`[onclick="toggleAudio('${audioId}')"]`);
+      if (btn) {
+        btn.querySelector('.audio-icon').textContent = '⏹';
+        btn.querySelector('.audio-text').textContent = 'Detener Narración';
+        btn.parentElement.classList.add('audio-playing');
+      }
+    } else {
+      audio.pause();
+      if (bgMusic.dataset.wasPlaying === "true") {
+        bgMusic.play().catch(e => console.error("Error al reanudar música:", e));
+        delete bgMusic.dataset.wasPlaying;
+      }
+      const btn = document.querySelector(`[onclick="toggleAudio('${audioId}')"]`);
+      if (btn) {
+        btn.querySelector('.audio-icon').textContent = '▶';
+        btn.querySelector('.audio-text').textContent = 'Escuchar Narración';
+        btn.parentElement.classList.remove('audio-playing');
+      }
+    }
+  }
+
+  // Barra de progreso
+  document.getElementById('audio-edsn')?.addEventListener('timeupdate', function () {
+    const audio = this;
+    const duration = isNaN(audio.duration) ? 1 : audio.duration;
+    const progress = (audio.currentTime / duration) * 100;
+    document.querySelector('.audio-progress-bar').style.width = `${progress}%`;
+    document.querySelector('.audio-time').textContent =
+      `${formatTime(audio.currentTime)} / ${formatTime(duration)}`;
+  });
+
+  document.getElementById('audio-edsn')?.addEventListener('ended', function () {
+    const btn = document.querySelector(`[onclick="toggleAudio('audio-edsn')"]`);
+    if (btn) {
+      btn.querySelector('.audio-icon').textContent = '🔁';
+      btn.querySelector('.audio-text').textContent = 'Escuchar de nuevo';
+      document.querySelector('.audio-progress-bar').style.width = '0%';
+    }
+  });
+
+  function formatTime(seconds = 0) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  }
+
+  // Si se reproduce la música de fondo, se detienen las narraciones
+  document.getElementById('bgMusic')?.addEventListener('play', function () {
+    document.querySelectorAll('.audio-narrativo').forEach(audio => {
+      if (!audio.paused) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
+  });
         
 
     </script>
