@@ -11,6 +11,19 @@
   gtag('config', 'G-TCVBW4X6XS');
 </script>
 
+        <script>
+  // Enviar evento de carga del iframe
+  window.addEventListener('load', function() {
+    gtag('event', 'iframe_load', {
+      'event_category': 'Iframe',
+      'event_label': 'Museo Virtual - Cargado',
+      'value': 1
+    });
+    console.log("Evento de carga del iframe enviado a Google Analytics.");
+  });
+</script>
+
+
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Museo Virtual | Sandino y Angelita Morales</title>
